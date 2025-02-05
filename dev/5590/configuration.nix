@@ -8,9 +8,6 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      # ../../home.nix
-      #modules.niri
-      ../../con/plymouth.nix
   ];
 
   # Enable support for those aetherial nix flakes.
@@ -18,17 +15,16 @@
 
   # Various settings for the boot process.
   boot = {
-    kernelModules = [
-      "i915"
-    ];
+    initrd.systemd.enable = true;
     # Enable GRUB and configure it to support EFI
     loader = {
       timeout = 0;
-      grub = {
-        enable = true;
-        efiSupport = true;
-        devices = [ "nodev" ];
-      };
+      systemd-boot.enable = true;
+      # grub = {
+      #   enable = true;
+      #   efiSupport = true;
+      #   devices = [ "nodev" ];
+      # };
       efi.canTouchEfiVariables = true;
     };
   };
@@ -36,8 +32,9 @@
   # Set the system's hostname. This is the name that the system will go by when it comes to networking.
   networking.hostName = "nix5590";
 
-  # Enable NetworkManager, easiest wifi manager to use. 
+  # Enable NetworkManager
   networking.networkmanager.enable = true;
+  # networking.nftables.enable = true;
 
   # Declare fonts that will be available for use on the system.
   fonts.packages = with pkgs; [ font-awesome ultimate-oldschool-pc-font-pack ];
@@ -54,23 +51,21 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+
+  # Enable the XFCE4 desktop and required dependancies. 
+  services.xserver.desktopManager.xfce.enable = true;
+  programs.nm-applet.enable = true;
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ]; 
+
   # Disable XTerm.
   services.xserver.excludePackages = [ pkgs.xterm ];
   services.xserver.desktopManager.xterm.enable = false;
+
   # Graphics configuration
   hardware.graphics = {
     enable = true;
-    extraPackages = with pkgs; [
-      intel-media-sdk
-      intel-media-driver
-      intel-vaapi-driver
-    ];
   };
-  # Enable the Niri Compositor
-  # programs.niri.enable = true;
-  programs.steam.enable = true;
-  # The rest of the config for Niri to make it a complete desktop is in "home.nix".
 
   # Configure keymap in X11
   services.xserver.xkb.layout = "us";
@@ -82,7 +77,7 @@
     samantha = {
       description = "To whom which will not be named";
       isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" "dialout" ]; # Enable ‘sudo’ for the user.
+      extraGroups = [ "wheel" "networkmanager" "dialout" "libvirtd" ]; # Enable ‘sudo’ for the user.
       packages = with pkgs; [ ];
     };
   };
@@ -90,66 +85,24 @@
   # Allow unfree packages available in the repo to be installed:
   nixpkgs.config.allowUnfree = true;
 
-  # Firefox Nightly overlay.
-  # nixpkgs.overlays = [ inputs.firefox.overlays.firefox ];
-
   # Packages installed system-wide. Search for more at "search.nixos.org" in the "Packages" tab.
   environment.systemPackages = with pkgs; [
-    # wget
     git
     google-chrome
-    # ecryptfs
     kitty
     neovim
-    # waybar
-    # wofi
-    # wbg
-    # swayidle
-    # swaylock
-    # xwayland-satellite
-    # bluetuith
-    wl-clipboard
-    # dmidecode
-    # wirelesstools
-    #inputs.nightly.packages.${pkgs.system}.firefox-nightly-bin
-    pavucontrol
-    # catppuccin
-    # catppuccin-gtk
-    # catppuccinifier-gui
-    nordic
-    nordzy-icon-theme
-    nordzy-cursor-theme
-    # numix-icon-theme-square
-    # gruvbox-plus-icons
     btop
     pciutils
     usbutils
-    # gtop
-    # brightnessctl
-    # libgtop
     youtube-music
-    # cava
+    cava
     vesktop
     prismlauncher
-    # soteria
-    # mako
-    # fuzzel
-    # playerctl
-    # gnome-calculator
     putty
-    gnomeExtensions.paperwm
-    gnomeExtensions.vertical-workspaces
-    gnomeExtensions.dash-to-panel
-    gnomeExtensions.arcmenu
+    bluetuith
+    firefox
+    virt-manager
   ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
 
   # Declare services that will be used on the system. Valid options can be found on "search.nixos.org" in the "NixOS Options" tab.
 
@@ -159,10 +112,21 @@
   # Enable "libinput".
   services.libinput.enable = true;
 
+  # Enable several virtualisation services. Also enable a manager that will deal with both Xen VMs and LXC containers.
+  virtualisation = {
+    # xen.enable = true;
+    # lxc.enable = true;
+    kvmgt.enable = true;
+    libvirtd = {
+      enable = true;
+      # qemu.package = pkgs.qemu_xen;
+    };
+  };
+  nix.settings.system-features = [ "kvm" ];
   # Enable Bluetooth support.
   hardware.bluetooth.enable = true;
 
-  # Enable sound support. People paint pipewire as the messiah, i see it more as a annoyance.
+  # Enable sound support with Pulseaudio instead of Pipewire.
   services.pipewire.enable = lib.mkForce false;
   services.pipewire.pulse.enable = lib.mkForce false;
   hardware.pulseaudio.enable = true;
@@ -177,9 +141,9 @@
   services.cloudflare-warp.enable = true;
   
   # Enable Steam
-  # programs.steam.enable = true;
+  programs.steam.enable = true;
 
-  # Disable the NixOS documentation.
+  # Disable the NixOS documentation (all of it is available online, and a NixOS install requires the internet.
   documentation.nixos.enable = false;
 
   # Options to configure ports controlled by the firewall.
