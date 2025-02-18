@@ -53,10 +53,11 @@
   services.xserver.enable = true;
 
   # Enable the XFCE4 desktop and required dependancies. 
-  services.xserver.desktopManager.xfce.enable = true;
-  programs.nm-applet.enable = true;
-  xdg.portal.enable = true;
-  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ]; 
+  services.desktopManager.plasma6.enable = true;
+  services.xserver.displayManager.sddm.enable = true;
+  # programs.nm-applet.enable = true;
+  # xdg.portal.enable = true;
+  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ]; 
 
   # Disable XTerm.
   services.xserver.excludePackages = [ pkgs.xterm ];
@@ -74,10 +75,10 @@
   # Define users & their passwords for the system.  users.users = {
   users.users = {
   # Personal Account.
-    samantha = {
-      description = "To whom which will not be named";
+    pilot = {
+      # description = "To whom which will not be named";
       isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" "dialout" "libvirtd" ]; # Enable ‘sudo’ for the user.
+      extraGroups = [ "wheel" "networkmanager" "dialout" ]; # Enable ‘sudo’ for the user.
       packages = with pkgs; [ ];
     };
   };
@@ -101,7 +102,11 @@
     putty
     bluetuith
     firefox
-    virt-manager
+    everforest-gtk-theme
+    numix-icon-theme-square
+    # virt-manager
+    xfce.xfce4-whiskermenu-plugin
+    xfce.xfce4-docklike-plugin
   ];
 
   # Declare services that will be used on the system. Valid options can be found on "search.nixos.org" in the "NixOS Options" tab.
@@ -113,18 +118,19 @@
   services.libinput.enable = true;
 
   # Enable several virtualisation services. Also enable a manager that will deal with both Xen VMs and LXC containers.
-  virtualisation = {
-    # xen.enable = true;
-    # lxc.enable = true;
-    kvmgt.enable = true;
-    libvirtd = {
-      enable = true;
-      # qemu.package = pkgs.qemu_xen;
-    };
-  };
-  nix.settings.system-features = [ "kvm" ];
+  # virtualisation = {
+  #   # xen.enable = true;
+  #   # lxc.enable = true;
+  #   kvmgt.enable = true;
+  #   libvirtd = {
+  #     enable = true;
+  #     # qemu.package = pkgs.qemu_xen;
+  #   };
+  # };
+  # nix.settings.system-features = [ "kvm" ];
   # Enable Bluetooth support.
   hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
 
   # Enable sound support with Pulseaudio instead of Pipewire.
   services.pipewire.enable = lib.mkForce false;
@@ -134,8 +140,10 @@
   # Enable Flatpak support.
   services.flatpak.enable = true;
   
+  services.tlp.enable = true;
+
   # Enable PolKit to fix an issue with NetworkManager
-  security.polkit.enable = true;
+  # security.polkit.enable = true;
   
   # Enable Cloudflare's "warp" proxy.
   services.cloudflare-warp.enable = true;
