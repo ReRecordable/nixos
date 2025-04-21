@@ -19,13 +19,14 @@
     # Enable GRUB and configure it to support EFI
     loader = {
       timeout = 0;
-      systemd-boot.enable = true;
-      # grub = {
-      #   enable = true;
-      #   efiSupport = true;
-      #   devices = [ "nodev" ];
-      # };
+      # systemd-boot.enable = true;
+      grub = {
+        enable = true;
+        efiSupport = true;
+        devices = [ "nodev" ];
+      };
       efi.canTouchEfiVariables = true;
+      efi.efiSysMountPoint = "/efi";
     };
   };
 
