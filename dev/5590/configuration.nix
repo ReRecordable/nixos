@@ -15,7 +15,7 @@
 
   # Various settings for the boot process.
   boot = {
-    initrd.systemd.enable = true;
+    # initrd.systemd.enable = true;
     # Enable GRUB and configure it to support EFI
     loader = {
       timeout = 0;
@@ -53,11 +53,11 @@
   services.xserver.enable = true;
 
   # Enable the XFCE4 desktop and required dependancies. 
-  services.desktopManager.plasma6.enable = true;
-  services.xserver.displayManager.sddm.enable = true;
-  # programs.nm-applet.enable = true;
-  # xdg.portal.enable = true;
-  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ]; 
+  services.xserver.desktopManager.xfce.enable = true;
+  services.xserver.displayManager.startx.enable = true;
+  programs.nm-applet.enable = true;
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ]; 
 
   # Disable XTerm.
   services.xserver.excludePackages = [ pkgs.xterm ];
@@ -95,6 +95,7 @@
     btop
     pciutils
     usbutils
+    unzip
     youtube-music
     cava
     vesktop
@@ -104,7 +105,6 @@
     firefox
     everforest-gtk-theme
     numix-icon-theme-square
-    # virt-manager
     xfce.xfce4-whiskermenu-plugin
     xfce.xfce4-docklike-plugin
   ];
@@ -116,6 +116,13 @@
 
   # Enable "libinput".
   services.libinput.enable = true;
+
+  ##  XFCE nonsense
+  programs.thunar.enable = true;
+  programs.thunar.plugins = with pkgs.xfce; [
+    thunar-archive-plugin
+    thunar-volman
+  ];
 
   # Enable several virtualisation services. Also enable a manager that will deal with both Xen VMs and LXC containers.
   # virtualisation = {
@@ -140,7 +147,7 @@
   # Enable Flatpak support.
   services.flatpak.enable = true;
   
-  services.tlp.enable = true;
+  # services.tlp.enable = true;
 
   # Enable PolKit to fix an issue with NetworkManager
   # security.polkit.enable = true;
