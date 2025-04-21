@@ -8,16 +8,17 @@
   };
 
   outputs = {self, nixpkgs, jovian, ... }@inputs: { 
-    nixosConfigurations = { 
-      "nix-deck" = nixpkgs.lib.nixosSystem {
-         system = "x86_64-linux";
-         specialArgs = { inherit inputs; };
-         modules = [ ./dev/deck/configuration.nix jovian.nixosModules.jovian ];
-      };
+    nixosConfigurations = {
+      # Disable this for now, going to redo the config.
+      # "nix-deck" = nixpkgs.lib.nixosSystem {
+      #    system = "x86_64-linux";
+      #    specialArgs = { inherit inputs; };
+      #    modules = [ ./dev/deck/configuration.nix jovian.nixosModules.jovian ];
+      # };
       "nix5590" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
 	specialArgs = { inherit inputs; };
-	modules = [ ./dev/5590/configuration.nix ];
+	modules = [ ./Devices/5590/configuration.nix ];
       };
     };
   };
